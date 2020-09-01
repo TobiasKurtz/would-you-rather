@@ -14,7 +14,7 @@ function Routes(props) {
     <div className="container">
       <Switch>
         {props.notLoggedIn ? (
-          <Route path="/" exact component={Login} />
+          <Route path="/" component={Login} />
         ) : (
           <Fragment>
             <Route path="/" exact component={Dashboard} />
