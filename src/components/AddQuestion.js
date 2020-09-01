@@ -76,7 +76,10 @@ class AddQuestion extends React.Component {
                     onChange={this.handleAnswerTwo}
                   />
                 </FormGroup>
-                <Button disabled={optionTwo === "" || optionOne === ""}>
+                <Button
+                  type="submit"
+                  disabled={optionTwo === "" || optionOne === ""}
+                >
                   AddQuestion
                 </Button>
               </Form>

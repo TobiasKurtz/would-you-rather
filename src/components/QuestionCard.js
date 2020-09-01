@@ -5,10 +5,6 @@ import { Card, CardTitle, CardBody } from "reactstrap";
 import PropTypes from "prop-types";
 
 class QuestionCard extends React.Component {
-  constuctor() {
-    this.loadQuestions = this.routeChange.bind(this);
-  }
-
   loadQuestions(e, questionId) {
     let path = "/questions/" + questionId;
     this.props.history.push(path);

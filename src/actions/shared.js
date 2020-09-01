@@ -20,12 +20,12 @@ export function handleInitialData() {
   };
 }
 
-export function handleAddQuestion(optionOne, optionTwo) {
+export function handleAddQuestion(optionOneText, optionTwoText) {
   return (dispatch, getState) => {
     const { authedUser } = getState();
     return _saveQuestion({
-      optionOne,
-      optionTwo,
+      optionOneText,
+      optionTwoText,
       author: authedUser,
     }).then((question) => {
       dispatch(addQuestion(question));
