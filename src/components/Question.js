@@ -16,6 +16,7 @@ import { connect } from "react-redux";
 import User from "./User";
 import { handleAnswer } from "../actions/shared";
 import PropTypes from "prop-types";
+import { Redirect } from "react-router-dom";
 
 class Question extends PureComponent {
   state = {
@@ -45,87 +46,95 @@ class Question extends PureComponent {
     const { answerGiven } = this.state;
 
     return (
-      <Row>
-        <Col md={{ offset: 3, size: 6 }} sm="12">
-          <Card>
-            <CardHeader>
-              <User id={questionAuthor.id} />
-            </CardHeader>
-            <CardBody>
-              <CardTitle>Would you rather</CardTitle>
-              {answer ? (
-                <div>
-                  <FormGroup>
-                    <FormGroup check disabled>
-                      <label check>
-                        <Input
-                          type="radio"
-                          checked={answer === "optionOne"}
-                          readOnly
-                        />{" "}
-                        {question.optionOne.text}
-                      </label>
-                    </FormGroup>
-                    <FormGroup check disabled>
-                      <label check>
-                        <Input
-                          type="radio"
-                          checked={answer === "optionTwo"}
-                          readOnly
-                        />{" "}
-                        {question.optionTwo.text}
-                      </label>
-                    </FormGroup>
-                  </FormGroup>
-                  <div className="progress">
-                    <div
-                      className="progress-one"
-                      style={{ width: `${percentOne}%` }}
-                    >
-                      {`${percentOne}%`}
+      <div>
+        {!question ? (
+          <Redirect to="/404" />
+        ) : (
+          <Row>
+            <Col md={{ offset: 3, size: 6 }} sm="12">
+              <Card>
+                <CardHeader>
+                  <User id={questionAuthor.id} />
+                </CardHeader>
+                <CardBody>
+                  <CardTitle>Would you rather</CardTitle>
+                  {answer ? (
+                    <div>
+                      <FormGroup>
+                        <FormGroup check disabled>
+                          <label check>
+                            <Input
+                              type="radio"
+                              checked={answer === "optionOne"}
+                              readOnly
+                            />{" "}
+                            {question.optionOne.text}
+                          </label>
+                        </FormGroup>
+                        <FormGroup check disabled>
+                          <label check>
+                            <Input
+                              type="radio"
+                              checked={answer === "optionTwo"}
+                              readOnly
+                            />{" "}
+                            {question.optionTwo.text}
+                          </label>
+                        </FormGroup>
+                      </FormGroup>
+                      <div className="progress">
+                        <div
+                          className="progress-one"
+                          style={{ width: `${percentOne}%` }}
+                        >
+                          {`${percentOne}%`}
+                        </div>
+                        <div
+                          className="progress-two"
+                          style={{ width: `${percentTwo}%` }}
+                        >
+                          {`${percentTwo}%`}
+                        </div>
+                      </div>
+                      <div className="total">
+                        Total Number of votes: {total}
+                      </div>
                     </div>
-                    <div
-                      className="progress-two"
-                      style={{ width: `${percentTwo}%` }}
-                    >
-                      {`${percentTwo}%`}
-                    </div>
-                  </div>
-                  <div className="total">Total Number of votes: {total}</div>
-                </div>
-              ) : (
-                <Form onSubmit={this.handleSubmit}>
-                  <FormGroup tag="fieldset">
-                    <FormGroup>
-                      <Label>
-                        <Input
-                          type="radio"
-                          name="radio1"
-                          value="optionOne"
-                          onChange={this.givenAnswer}
-                        />{" "}
-                        {question.optionOne.text}
-                      </Label>
-                    </FormGroup>
-                    <FormGroup>
-                      <Label>
-                        <Input
-                          type="radio"
-                          name="radio1"
-                          value="optionTwo"
-                          onChange={this.givenAnswer}
-                        />{" "}
-                        {question.optionTwo.text}
-                      </Label>
-                    </FormGroup>
-                  </FormGroup>
-                  <Button disabled={answerGiven === ""}>Answer</Button>
-                </Form>
-              )}
-            </CardBody>
-          </Card>
-        </Col>
-      </Row>
+                  ) : (
+                    <Form onSubmit={this.handleSubmit}>
+                      <FormGroup tag="fieldset">
+                        <FormGroup>
+                          <Label>
+                            <Input
+                              type="radio"
+                              name="radio1"
+                              value="optionOne"
+                              onChange={this.givenAnswer}
+                            />{" "}
+                            {question.optionOne.text}
+                          </Label>
+                        </FormGroup>
+                        <FormGroup>
+                          <Label>
+                            <Input
+                              type="radio"
+                              name="radio1"
+                              value="optionTwo"
+                              onChange={this.givenAnswer}
+                            />{" "}
+                            {question.optionTwo.text}
+                          </Label>
+                        </FormGroup>
+                      </FormGroup>
+                      <Button disabled={answerGiven === ""}>Answer</Button>
+                    </Form>
+                  )}
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+        )}
+      </div>
     );
   }
 }
@@ -134,8 +143,6 @@ Question.propTypes = {
   question: PropTypes.object,
   questionAuthor: PropTypes.object,
   answer: PropTypes.string,
-  percOne: PropTypes.string.isRequired,
-  percTwo: PropTypes.string.isRequired,
 };
 
 function financial(a) {
@@ -147,7 +154,10 @@ function mapStateToProps({ questions, users, authedUser }, { match }) {
   let answer, percentOne, percentTwo, total;
   const { id } = match.params;
   const question = questions[id];
-  if (answers.hasOwnProperty(question.id)) {
+  if (!question) {
+    return;
+  }
+  if (answers?.hasOwnProperty(question.id)) {
     answer = answers[question.id];
   }
   const questionAuthor = users[question.author];
@@ -155,6 +165,8 @@ function mapStateToProps({ questions, users, authedUser }, { match }) {
   percentOne = financial((question.optionOne.votes.length / total) * 100);
   percentTwo = financial((question.optionTwo.votes.length / total) * 100);
   return {
+    users,
+    qid: id,
     question,
     questionAuthor,
     answer,

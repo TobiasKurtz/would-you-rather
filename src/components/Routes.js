@@ -22,9 +22,9 @@ function Routes(props) {
             <Route path="/add" exact component={AddQuestion} />
             <Route path="/questions/:id" exact component={Question} />
             <Route path="/logout" exact component={Logout} />
+            <Route path="/404" component={WrongSide} />
           </Fragment>
         )}
-        <Route component={WrongSide} />
       </Switch>
     </div>
   );
